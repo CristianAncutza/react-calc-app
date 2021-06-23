@@ -1,43 +1,51 @@
-import React from 'react'
+
+/* eslint no-eval:0*/ //<-- esto remueve el warning que genera eval
+import React,{useState} from 'react'
+import Functions from './components/Functions'
+import words from 'lodash.words'
+import Numbers from './components/Numbers'
+import MathOperations from './components/MathOperations'
 import Result from './components/Result'
 import './App.css'
 
+
 // Función Flecha o Arrow Function
 const App = () => {
+    //Array destructuring
+    const [stack, setStack] = useState("")
+   const items = words(stack, /[^-^+^*^/]+/g)
+   console.log("renderizacion de la app",items)
     // Lo que ejecuta la función
     console.log("Renderización de App")
     return (
     <main className='react-calculator'>
-        <Result value="{0}"/>
-        <div className="numbers">
-            <button>1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>4</button>
-            <button>5</button>
-            <button>6</button>
-            <button>7</button>
-            <button>8</button>
-            <button>9</button>
-            <button>0</button>
-        </div>
-        <div className="functions">
-            <button>
-                clear
-            </button>
-            <button>
-                r
-            </button>
-        </div>
-        <div className="math-operations">
-            <button>+</button>
-            <button>-</button>
-            <button>*</button>
-            <button>/</button>
-            <button>=</button>
-        </div>
-    </main>)
-}
+        <Result value={stack}/>
+        <Numbers
+        onClickNumber={number=>{console.log("Click en number",number)
+        setStack(`${stack}${number}`)//template literals para anidar numeros
+    }}
+        ></Numbers>
+        <Functions
+            onContentClear={()=>{console.log("Content clear")
+            setStack('')        
+        } }
+            onDelete={()=>{
+            if(stack.length >0){                
+                const newStack = stack.substring(0, stack.length - 1)
+                setStack(newStack)
+            }            
+        }} 
+        ></Functions>
+        <MathOperations        
+            onClickOperation={operation => {console.log("Operation:",operation)
+            setStack(`${stack}${operation}`)
+        }}
+            onClickEqual={equal=> {console.log("Equal:",equal)
+            setStack(eval(stack).toString()) // eval realiza las operaciones matematicas
+        }} 
+        />
+        </main>
+)}
 
 export default App
 
